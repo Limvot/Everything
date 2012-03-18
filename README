@@ -1,0 +1,9 @@
+///////////////////////
+README for Everything
+///////////////////////
+
+This game uses the Phenomenon Game Engine, found at https://github.com/Limvot/Phenomenon-Engine
+The engine and game both use SDL, and the engine uses GLEW, so these should be installed on your system.
+You will have to modify the Code::Blocks project to correspond to the directories where you have the different headers and libraries, including those for Phenomenon.
+
+Right now, due to its small size, the Phenomenon engine is statically linked.
