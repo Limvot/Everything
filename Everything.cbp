@@ -37,11 +37,11 @@
 			<Add directory="../Phenomenon-Engine/phenomenon" />
 		</Compiler>
 		<Linker>
+			<Add library="phenomenon" />
 			<Add library="SDL" />
 			<Add library="GL" />
 			<Add library="GLU" />
 			<Add library="GLEW" />
-			<Add library="phenomenon" />
 			<Add directory="../Phenomenon-Engine" />
 		</Linker>
 		<Unit filename="main.cpp" />
