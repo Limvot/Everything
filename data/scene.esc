@@ -1,0 +1,4 @@
+o ./data/Monkey.obj 0.0/0.0/0.0 90.0/0.0/0.0 1.0/1.0/1.0
+to ./data/Monkey.obj ./data/MonkeyFace.jpg 0.0/2.0/0.0 90.0/0.0/0.0 1.0/1.0/1.0
+to ./data/FirstLevel.obj ./data/dark_rock_tile_resize2.jpg 0.0/-3.0/0.0 0.0/0.0/0.0 1.0/1.0/1.0
+to ./data/SkyBox.obj ./data/skybox_scale_powertwo.jpg 0.0/0.0/0.0 0.0/0.0/0.0 3.0/3.0/3.0
