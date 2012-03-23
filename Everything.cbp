@@ -44,6 +44,8 @@
 			<Add library="GLEW" />
 			<Add directory="../Phenomenon-Engine" />
 		</Linker>
+		<Unit filename="SceneLoader.cpp" />
+		<Unit filename="SceneLoader.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
