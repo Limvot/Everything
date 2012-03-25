@@ -54,7 +54,8 @@ int SceneLoader::loadScene(Scene* scene, string file_path)
 
             scene->getRootNode()->addChild(loading_obj);
 
-            std::cout << "Loaded object from " << loading_obj_file_path << "\n";
+            if(loading_obj)
+                std::cout << "Loaded object from " << loading_obj_file_path << "\n";
 
             loading_obj = NULL;
             loading_obj_file_path = "";
@@ -80,7 +81,8 @@ int SceneLoader::loadScene(Scene* scene, string file_path)
 
             scene->getRootNode()->addChild(loading_obj);
 
-            std::cout << "Loaded object from " << loading_obj_file_path << " with material and texture from " << loading_texture_file_path << "\n";
+            if(loading_obj)
+                std::cout << "Loaded object from " << loading_obj_file_path << " with material and texture from " << loading_texture_file_path << "\n";
 
             loading_obj = NULL;
             loading_material = NULL;

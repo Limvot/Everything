@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     camera.setLocalRotation(0.0f, 0.0f, 0.0f);
     camera.setLocalScale(1.0f, 1.0f, 1.0f);
 
-    GLfloat camera_rotate_x, camera_rotate_y, camera_move_fb, camera_move_lr;       //Set up our movement variables
+    GLfloat camera_rotate_x = 0, camera_rotate_y = 0, camera_move_fb = 0, camera_move_lr = 0;       //Set up our movement variables
 
 
     while(!done)                                                //Main loop
@@ -182,6 +182,7 @@ int main(int argc, char* argv[])
             window.clearScreen();
             camera.drawScene(&scene);                   //All nodes draw() function, including basic nodes like rootNode, calls the draw() functions of their children.
             window.swapBuffers();                       //Thus, calling rootNode.draw() will draw the entire scene. However, to use a camera, you must call drawScene on it
+            //cout<<"drew frame\n";
         } else {/*sleep(1);*/}                          //and pass it the scene. It will apply the appropriate translation, rotation, and scale for its own properties,
                                                         //Scene will set up lights and rendering, then call draw() on the root node.
     }
