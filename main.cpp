@@ -43,7 +43,17 @@ int main(int argc, char* argv[])
     rootNode->setLocalPosition(0.0f, 0.0f, 0.0f);
     lightNode->setLocalPosition(0.0f, 5.0f, 1.0f);
 
+    Node* shaded_node = createTriangle("shaded_triangle");
+    Material* shaded_material = scene.newMaterial("shaded_material");
 
+    Shader* basic_shader = new Shader("basic_shader");
+    //basic_shader.createShaderProgram("./data/sample_shader.vert", "./data/sample_shader.frag");
+    basic_shader->createShaderProgram("./data/sample_shader.frag");
+
+    shaded_material->setShader(basic_shader);
+    shaded_node->setMaterial(shaded_material);
+
+    rootNode->addChild(shaded_node);
 
     camera.setLocalPosition(0.0f, 0.0f, 6.0f);                  //Setting the camera 6 units toward the screen is the same as setting everything else 6 units away.
     camera.setLocalRotation(0.0f, 0.0f, 0.0f);
@@ -170,9 +180,9 @@ int main(int argc, char* argv[])
                     window.handleEvent(event);          //If not a keypress or SDL_QUIT, let the engine handle the event. Possibilities include window resize, losing window focus.
                 }
             }
-        } //end while
+        }                                               //end while
 
-        camera.rotate(camera_rotate_x, camera_rotate_y, 0);     //Rotate
+        camera.rotate(camera_rotate_x, camera_rotate_y, 0);        //Rotate
         camera.goForward(camera_move_fb/10);                       //Moving foreward a negitive ammount is moving backward
         camera.goLeft(camera_move_lr/10);                          //Moving left a negitive ammount is moving right
 
@@ -186,13 +196,13 @@ int main(int argc, char* argv[])
         } else {/*sleep(1);*/}                          //and pass it the scene. It will apply the appropriate translation, rotation, and scale for its own properties,
                                                         //Scene will set up lights and rendering, then call draw() on the root node.
     }
-                                /////////////////////////
-                                //NOTE
-                                /////////////////////////
-                                //Nodes get destroyed when their parents falls out of scope.
-                                //If you delete them manually (without using the deleteChild(child's name) from the parent node)
-                                //the parent will segfault when it trys to delete them.
-                                //Here scene owns rootNode, which is the parent of every other dynamically allocated node, so it deletes them all when it falls out of scope.
-                                //Materials and textures are handeld by scene as well, and are deleted when it falls out of scope.
+                                                        /////////////////////////
+                                                        //NOTE
+                                                        /////////////////////////
+                                                        //Nodes get destroyed when their parents falls out of scope.
+                                                        //If you delete them manually (without using the deleteChild(child's name) from the parent node)
+                                                        //the parent will segfault when it trys to delete them.
+                                                        //Here scene owns rootNode, which is the parent of every other dynamically allocated node, so it deletes them all when it falls out of scope.
+                                                        //Materials and textures are handeld by scene as well, and are deleted when it falls out of scope.
     return 0;
 }
