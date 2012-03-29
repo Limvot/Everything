@@ -9,6 +9,7 @@ This is important, as the engine uses it to handle window resize and window loss
 #include "SceneLoader.h"                                        //Object that loads scene files (.esc)
 
 using namespace std;
+using namespace phen;                                           //The Phenomenon engine namespace
 
 int main(int argc, char* argv[])
 {

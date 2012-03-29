@@ -9,12 +9,14 @@
 
 #include "Phenomenon.h"
 
+using namespace phen;
+
 class SceneLoader
 {
     public:
         SceneLoader();
         virtual ~SceneLoader();
-        int loadScene(Scene* scene, string file_path);
+        int loadScene(Scene* scene, std::string file_path);
 
     protected:
     private:

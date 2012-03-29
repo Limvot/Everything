@@ -9,7 +9,7 @@ SceneLoader::~SceneLoader()
 
 }
 
-int SceneLoader::loadScene(Scene* scene, string file_path)
+int SceneLoader::loadScene(Scene* scene, std::string file_path)
 {
 
     FILE * file = fopen(file_path.c_str(), "r");
@@ -23,8 +23,8 @@ int SceneLoader::loadScene(Scene* scene, string file_path)
 
     char buffer[1024];
     char buffer2 [1024];
-    string loading_obj_file_path;
-    string loading_texture_file_path;
+    std::string loading_obj_file_path;
+    std::string loading_texture_file_path;
     ModelLoader model_loader;
     StaticObject* loading_obj;
     Material* loading_material;
