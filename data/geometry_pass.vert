@@ -5,18 +5,17 @@ layout (location = 1) in vec3 normal_modelspace;
 layout (location = 2) in vec2 UV_in;
 
 uniform mat4 M, V, MVP;
-uniform vec3 lightPosition_worldspace, LightColor_in;
-uniform float LightPower_in;
 
 out vec2 UV;
-out vec3 WorldPos, normal;
+out vec3 normal_viewspace, position_viewspace;
 
 
 void main() {
-                                          //Output the position of the vertex in clip space\
-    gl_Position = MVP * vec4(position_modelspace, 1);
-    WorldPos = M * vec4(position_modelspace, 1);
+
+    gl_Position = MVP * vec4(position_modelspace, 1);                                           //Output the position of the vertex in clip space
     UV = UV_in;                                                                                   //Pass the UVs through
-    vec3 normal_cameraspace = (V * M * vec4(normal_modelspace,0)).xyz;                           //Here we transform everything to camera space
-    normal = normalize(normal_cameraspace);                                                           //Pass the normalized vectors through
+    //position_worldspace = (M * vec4(position_modelspace,1)).xyz;
+    position_viewspace = (V * M * vec4(position_modelspace,1)).xyz;
+    //normal_worldspace = normalize((M * vec4(normal_modelspace,0)).xyz);                                                           //Pass the normalized vectors through
+    normal_viewspace = normalize((V * M * vec4(normal_modelspace,0)).xyz);                                                      //This replace the above (this is for tansfer to viewspace)
 }

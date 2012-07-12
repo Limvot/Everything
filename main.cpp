@@ -15,57 +15,98 @@ This is important, as the engine uses it to handle window resize and window loss
 using namespace std;
 using namespace phen;                                           //The Phenomenon engine namespace
 
-int main(int argc, char* argv[])
+
+Window window;                                              //Create our window class, which handles all the windowing/SDL/GL init stuff
+Scene scene;
+Renderer renderer;
+Camera camera;
+
+Node *rootNode, *MonkeyHead;
+Light *lightNode;
+
+int setup()
 {
-
-    Window window;                                              //Create our window class, which handles all the windowing/SDL/GL init stuff
-
-    int done = false;                                           //Main loop variable
-    SDL_Event *event;                                           //Useed in collecting events
-    event = new SDL_Event;
-
-    window.create(1024, 768,32);                                  //Creates the window. Sets up SDL and OpenGL, sets some variables
-    //window.create(640, 480,32);                                  //Creates the window. Sets up SDL and OpenGL, sets some variables
-    window.setCaption("Everything");                            //The window should be created before you start setting up anything that could make SDL or OpenGL calls.
+    window.initGL();
+    string OpenGL_Version = (const char*)glGetString(GL_VERSION);           //Note the C-style cast
+    cout<< "OpenGL version is reported as: " << OpenGL_Version << endl;    //Show OpenGL version
+    string windowCaption = "Everything: OpenGL is reported as " + OpenGL_Version;
+    window.setCaption(windowCaption);                            //The window should be created before you start setting up anything that could make SDL or OpenGL calls.
     window.enableBackfaceCulling();                             //Enable backface culling for a speed-up.
 
     cout<< "OpenGL version is reported as: " << glGetString(GL_VERSION) << endl;    //Show OpenGL version
 
+                                             //Scenes are just that, scenes. They are renderd with a camera. Each scene has its own root node.
+    renderer.init(1024.0f, 768.0f, 2.2);
+    renderer.initQuad();
 
-    Scene scene;                                                //Scenes are just that, scenes. They are renderd with a camera. Each scene has its own root node.
-    Node* rootNode = scene.getRootNode();                       //All objects are represented with nodes. Basic nodes can be used to group together other nodes. This node is the root node.
+    Shader* lighting_shader = scene.newShader("lighting_shader");
+    lighting_shader->createShaderProgram("data/LightPass.vert", "data/LightPass.frag");
+    renderer.initLighting(lighting_shader);
 
-    Renderer renderer;                                          //A renderer object takes a camera and a scene and renders them.
-    renderer.init(1024, 768, 2.2);
     Shader* fullscreen_shader = scene.newShader("fullscreen_quad_shader");
-    fullscreen_shader->createShaderProgram("data/FullScreenQuad.vert", "./data/FullScreenQuad.frag");
-    renderer.initQuad(fullscreen_shader);                       //Pass in your fullscreen quad shader. This is where post-processing effects are done
+    fullscreen_shader->createShaderProgram("data/FullScreenQuad.vert", "data/FullScreenQuad.frag");
+    renderer.initPostProcess(fullscreen_shader);                       //Pass in your fullscreen quad shader. This is where post-processing effects are done
 
-
-    Camera camera("camera");                                    //Cameras inherit Node too, and thus require a name. It also dosn't have to be attached to a root node, but can be attached to a node if you wish. Just <dynamic_cast> again.*/
-    camera.setProjectionMatrix(1024, 768, FOV, Z_NEAR, Z_FAR);    //Aspect ratio, Field of View, near plane, far plane
+    camera.setProjectionMatrix(1024.0f/768.0f, FOV, Z_NEAR, Z_FAR);    //Aspect ratio, Field of View, near plane, far plane
     //camera.setProjectionMatrix(640, 480, FOV, Z_NEAR, Z_FAR);    //Aspect ratio, Field of View, near plane, far plane
 
     //SceneLoader scene_loader;                                   //A scene loader object takes a scene and a (currently VERY basic) scene file (.esc) and loads the objects specified in the file into the scene.
     //scene_loader.loadScene(&scene, "./data/scene_mirror.esc");
     //scene_loader.loadScene(&scene, "./data/scene.esc");
 
-    Light* lightNode = scene.newLight("light");                 //Lights are handled specially, so you must create them using a scene object.
 
-    scene.enableLighting();                                     //Enable lighting by default.
+    rootNode = scene.getRootNode();                       //All objects are represented with nodes. Basic nodes can be used to group together other nodes. This node is the root node.
+
+    lightNode = scene.newLight("light");                 //Lights are handled specially, so you must create them using a scene object.
+
+    lightNode->setDiffuse(0.0f, 0.2f, 1.0f);                    //Default is full white (1.0f, 1.0f, 1.0f)
+    lightNode->setAmbient(0.0f, 0.0f, 0.0f);                    //Default is medium gray (0.05f, 0.05f, 0.05f)
+    lightNode->setSpecular(0.0f, 0.0f, 1.0f);
+    lightNode->setPower(15.0f);
+    lightNode->setLocalPosition(3.0f, 5.0f, 1.0f);
+
+
+    lightNode = scene.newLight("light2");                 //Lights are handled specially, so you must create them using a scene object.
+
+    lightNode->setDiffuse(1.0f, 0.2f, 0.0f);                    //Default is full white (1.0f, 1.0f, 1.0f)
+    lightNode->setAmbient(0.0f, 0.0f, 0.0f);                    //Default is medium gray (0.05f, 0.05f, 0.05f)
+    lightNode->setSpecular(1.0f, 0.0f, 0.0f);
+    lightNode->setPower(15.0f);
+    lightNode->setLocalPosition(-3.0f, 5.0f, 1.0f);
+
+    lightNode = scene.newLight("light3");                 //Lights are handled specially, so you must create them using a scene object.
+
+    lightNode->setDiffuse(0.0f, 1.0f, 0.0f);                    //Default is full white (1.0f, 1.0f, 1.0f)
+    lightNode->setAmbient(0.0f, 0.0f, 0.0f);                    //Default is medium gray (0.05f, 0.05f, 0.05f)
+    lightNode->setSpecular(0.0f, 1.0f, 0.0f);
+    lightNode->setPower(15.0f);
+    lightNode->setLocalPosition(0.0f, 5.0f, -2.0f);
+
+    lightNode = scene.newLight("light4");                 //Lights are handled specially, so you must create them using a scene object.
 
     lightNode->setDiffuse(1.0f, 1.0f, 1.0f);                    //Default is full white (1.0f, 1.0f, 1.0f)
-    lightNode->setAmbient(0.8f, 0.8f, 0.8f);                    //Default is medium gray (0.5f, 0.5f, 0.5f)
+    lightNode->setAmbient(0.0f, 0.0f, 0.0f);                    //Default is medium gray (0.05f, 0.05f, 0.05f)
+    lightNode->setSpecular(1.0f, 1.0f, 1.0f);
+    lightNode->setPower(30.0f);
+    lightNode->setLocalPosition(0.0f, 7.0f, 0.0f);
+/*
+    lightNode = scene.newLight("sun");                 //Lights are handled specially, so you must create them using a scene object.
+
+    lightNode->setDiffuse(1.0f, 1.0f, 1.0f);                    //Default is full white (1.0f, 1.0f, 1.0f)
+    lightNode->setAmbient(0.0f, 0.0f, 0.0f);                    //Default is medium gray (0.05f, 0.05f, 0.05f)
+    lightNode->setSpecular(0.0f, 0.0f, 0.0f);
+    lightNode->setPower(100.0f);
+    lightNode->setLocalPosition(0.0f, 20.0f, 0.0f);
+*/
 
     rootNode->setLocalPosition(0.0f, 0.0f, 0.0f);
-    lightNode->setLocalPosition(0.0f, 5.0f, 1.0f);
 
     Shader* basic_shader = scene.newShader("basic_shader");
     basic_shader->createShaderProgram("./data/geometry_pass.vert", "./data/geometry_pass.frag");
 
     ModelLoader* loader = new ModelLoader(&scene, basic_shader, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);               //Give the ModelLoader our scene for use with .mtl loading. You can also set the texture filtering (min_filter then mag_filter) to be used for any model textues loaded. It defaults to GL_NEAREST, GL_LINEAR
 
-    //Node* LevelGroup = loader->loadOBJ("./crytek-sponza-diff/sponza-tri.obj", "first_level_group");    //Object loader, when loading a .obj with multiple objects, will load all the objects and attach them to an empty parent node, which is then returned.
+    //Node* LevelGroup = loader->loadOBJ("dabrovic-sponza/sponza-tri.obj", "first_level_group");    //Object loader, when loading a .obj with multiple objects, will load all the objects and attach them to an empty parent node, which is then returned.
     Node* LevelGroup = loader->loadOBJ("./data/FirstLevelFull.obj", "first_level_group");    //Object loader, when loading a .obj with multiple objects, will load all the objects and attach them to an empty parent node, which is then returned.
     rootNode->addChild(LevelGroup);
     LevelGroup->setLocalPosition(0,-1,0);
@@ -74,7 +115,7 @@ int main(int argc, char* argv[])
     std::cout << "loaded object\n";
 
     loader = new ModelLoader(&scene, basic_shader, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-    Node* MonkeyHead = loader->loadOBJ("./data/Monkey.obj", "monkey head");
+    MonkeyHead = loader->loadOBJ("./data/Monkey.obj", "monkey head");
     rootNode->addChild(MonkeyHead);
     MonkeyHead->setLocalPosition(0,0.5,4);
     MonkeyHead->setLocalRotation(0,180,0);
@@ -125,10 +166,25 @@ int main(int argc, char* argv[])
     camera.setLocalRotation(0.0f, 0.0f, 0.0f);
     camera.setLocalScale(1.0f, 1.0f, 1.0f);
 
+    return 0;
+}
+
+int main(int argc, char* argv[])
+{
+    //freopen("CON", "w", stdout);                                //Don't let SDL redirect the standard output to a file
+    //freopen("CON", "w", stderr);                                //Same for standard errors`
+
+    int done = false;                                           //Main loop variable
+    SDL_Event *event;                                           //Useed in collecting events
+    event = new SDL_Event;
+
+    window.create(1024, 768,32);                                  //Creates the window. Sets up SDL and OpenGL, sets some variables
+
     GLfloat camera_rotate_x = 0, camera_rotate_y = 0, camera_move_fb = 0, camera_move_lr = 0;       //Set up our movement variables
     GLfloat monkey_rotate_x = 0, monkey_rotate_y = 0;                                     //Set up our movement variables
     Vector monkey_current_rotation;
 
+    bool runarounds_run = false;
 
     while(!done)                                                //Main loop
     {
@@ -205,8 +261,8 @@ int main(int argc, char* argv[])
                         break;
 
                     case SDLK_u:
-                        window.initGL();
-                        scene.enableLighting();
+                        setup();
+                        runarounds_run = true;
                         cout << "u key pressed, ran workarounds\n";
                         break;
 
@@ -293,7 +349,7 @@ int main(int argc, char* argv[])
                         window.simpleResize(event->resize.w, event->resize.h);
                         camera.setProjectionMatrix(event->resize.w, event->resize.h, FOV, Z_NEAR, Z_FAR);
                         renderer.init(event->resize.w, event->resize.h);
-                        renderer.initQuad(fullscreen_shader);
+                        renderer.initQuad();
                     } else {
                         window.handleEvent(event);          //Let the engine handle the event.
                     }
@@ -305,11 +361,11 @@ int main(int argc, char* argv[])
         camera.goForward(camera_move_fb/10);                       //Moving foreward a negitive ammount is moving backward
         camera.goLeft(camera_move_lr/10);                          //Moving left a negitive ammount is moving right
 
-        monkey_current_rotation = MonkeyHead->getLocalRotation();
-        MonkeyHead->setLocalRotation(monkey_rotate_x + monkey_current_rotation.x, monkey_rotate_y + monkey_current_rotation.y, 0);        //Rotate
-
-        if (window.isActive)                            //window.isActive is false if we've already quit, or if we're minimised.
+        if (window.isActive && runarounds_run == true)                            //window.isActive is false if we've already quit, or if we're minimised.
         {
+            monkey_current_rotation = MonkeyHead->getLocalRotation();
+            MonkeyHead->setLocalRotation(monkey_rotate_x + monkey_current_rotation.x, monkey_rotate_y + monkey_current_rotation.y, 0);        //Rotate
+
             //physics_manager->step(1);
             window.clearScreen();
             renderer.render(&camera, &scene);           //All nodes draw() function, including basic nodes like rootNode, calls the draw() functions of their children.

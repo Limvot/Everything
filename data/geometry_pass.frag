@@ -1,21 +1,20 @@
 #version 330 core
 
 in vec2 UV;
-in vec3 WorldPos, normal;
+in vec3 normal_viewspace, position_viewspace;
 
 uniform sampler2D TextureSampler;
 
-layout (location = 0) out vec3 WorldPos_out;
-layout (location = 1) out vec3 Diffuse;
-layout (location = 2) out vec3 Normal;
-layout (location = 3) out vec3 TexCoord;
+layout (location = 0) out vec3 outposition_viewspace;
+layout (location = 1) out vec3 outDiffuse;
+layout (location = 2) out vec3 outnormal_viewspace;
+layout (location = 3) out vec3 outUV;
 
 void main()
 {
-    WorldPos_out = WorldPos;
-    Diffuse = texture2D(TextureSampler, UV).rgb;
-    Normal = normalize(normal);
-    TexCoord = vec3(UV, 0.0);
-
+    outDiffuse = texture(TextureSampler, UV).rgb;
+    outposition_viewspace = position_viewspace;
+    outnormal_viewspace = normal_viewspace;
+    outUV = vec3(UV, 1);
 }
 
